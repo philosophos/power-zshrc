@@ -1,4 +1,7 @@
-**Index**
+**Screenshot**
+![zsh-prompt](http://ola3xakol.bkt.clouddn.com/github/zsh-prompt.jpg?imageMogr2/thumbnail/!90p)
+
+**Index**  
 In VIM,push `*` jump to corresponding configuration; `Ctrl+o` return here.
 
     ###_set_options_###
