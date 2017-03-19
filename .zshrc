@@ -1,5 +1,5 @@
-###_set_options_###
 ###_set_variables_###
+###_set_options_###
 ###_aliases_###
 ###_Prompt_###
 ###_miscellaneous_code_###
@@ -7,7 +7,7 @@
 ###_enable_terminal_transparent_###
 
 ################################################################################
-###_set_variables_###
+###_set_variables_### (for oh-my-zsh)
 export PATH="$PATH:$HOME/.local/script"
 export ZSH=/usr/share/oh-my-zsh
 HISTORY_BASE="$HOME/.dir_history" #for plugin per-directory-history
@@ -62,7 +62,7 @@ archlinux systemd docker pip python bundler gem npm)
 source $ZSH/oh-my-zsh.sh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ###############################################################################
-###_set_options_###
+###_set_options_### see man zsh zshoptions
 
 # append history list to the history file; this is the default but we make sure
 # because it's required for share_history.
@@ -228,6 +228,13 @@ alias -s gif=feh
 
 ################################################################################
 ###_Prompt_###
+#see
+#man zshmisc
+#           EXPANSION OF PROMPT SEQUENCES
+#           SIMPLE PROMPT ESCAPES
+#           CONDITIONAL SUBSTRINGS IN PROMPTS
+#man zshcontrib
+#           GATHERING INFORMATION FROM VERSION CONTROL SYSTEMS
 
 autoload -U colors && colors
 autoload -U promptinit && promptinit
@@ -243,7 +250,7 @@ zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' actionformats \
     '%F{5}(%F{12}%s%F{5})%F{3}-%F{5}[%F{35}%b%F{3}|%F{1}%a%F{5}]%f'
 zstyle ':vcs_info:*' formats       \
-    '%F{5}(%F{12}%s%F{5})%F{3}-%F{5}[%F{35}%b%F{5}]%F{1}%c%F{2}%u%f'
+    '%F{5}(%F{12}%s%F{5})%F{3}-%F{5}[%F{35}%b%F{5}]%F{2}%c%F{1}%u%f'
 zstyle ':vcs_info:git:*' stagedstr 'M'
 zstyle ':vcs_info:git:*' unstagedstr 'M'
 zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
@@ -338,7 +345,7 @@ function modified () { emulate -L zsh; print -l -- *(m-${1:-1}) }
 check_com new || alias new=modified
 
 ###############################################################################
-###_bindkey_###
+###_bindkey_### see man zshzle
 bindkey "^U" backward-kill-line
 #setxkbmap -option ctrl:swapcaps
 ################################################################################
