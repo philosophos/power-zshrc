@@ -1,5 +1,5 @@
 **Screenshot**
-![zsh-prompt](http://on9we3d4u.bkt.clouddn.com/zsh-prompt.jpg?imageMogr2/thumbnail/!90p)
+![zsh-prompt](http://on9we3d4u.bkt.clouddn.com/zsh-prompt.jpg?imageMogr2/thumbnail/!90p/interlace)
 
 **Index**  
 In VIM,push `*` jump to corresponding configuration; `Ctrl+o` return here.
