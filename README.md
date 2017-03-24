@@ -1,5 +1,5 @@
 **Screenshot**
-![zsh-prompt](http://ola3xakol.bkt.clouddn.com/github/zsh-prompt.jpg?imageMogr2/thumbnail/!90p)
+![zsh-prompt](http://on9we3d4u.bkt.clouddn.com/zsh-prompt.jpg?imageMogr2/thumbnail/!90p)
 
 **Index**  
 In VIM,push `*` jump to corresponding configuration; `Ctrl+o` return here.
@@ -18,3 +18,10 @@ In VIM,push `*` jump to corresponding configuration; `Ctrl+o` return here.
     zsh-syntax-highlighting oh-my-zsh
 And a terminal supported 256-color
 
+**More Configuration**
+
+[VIM](https://github.com/philosophos/easy-vimrc)         -- the God of Text Editor,For Human  
+[TMUX](https://github.com/philosophos/tmux.conf)         -- Terminal Multiplexer,For Efficiency  
+[URxvt&XTerm](https://github.com/philosophos/Xresources) -- Classic Terminal,Lesser Dependencies  
+[Awesome](https://github.com/philosophos/awesome-WM-rc)  -- Tilling Window Manager,Highly Configuration  
+[Conky](https://github.com/philosophos/conky.conf)       -- Lightweight System Monitor for X，Highly Configuration  
