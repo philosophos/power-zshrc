@@ -356,12 +356,12 @@ bindkey "^U" backward-kill-line
 ################################################################################
 ###_enable_terminal_transparent_###
 if [ -n "$WINDOWID" ];then
-	TRANSPARENCY_HEX=$(printf 0x%x $((0xffffffff * 10 / 100)))
+	TRANSPARENCY_HEX=$(printf 0x%x $((0xffffffff * 80 / 100)))
 	xprop -id "$WINDOWID" -f _NET_WM_WINDOW_OPACITY 32c \
                        -set _NET_WM_WINDOW_OPACITY "$TRANSPARENCY_HEX"
 fi
 
-[[ $TERM=="xterm-256color" || $TERM=="rxvt-unicode-256color" ]]\
-&& transset-df .9 --id "$WINDOWID" >/dev/null
+#[[ $TERM=="xterm-256color" || $TERM=="rxvt-unicode-256color" ]]\
+#&& transset-df .9 --id "$WINDOWID" >/dev/null
 
 ## END OF FILE #################################################################
