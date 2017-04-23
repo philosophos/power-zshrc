@@ -266,6 +266,7 @@ fi
 }
 precmd () { vcs_info }
 RPROMPT=' %F{243}%3~%f ${vcs_info_msg_0_}%f'
+export PS4='+\e[33m${LINENO}\e[37m:\e[30;1m${FUNCNAME[0]}\e[37m:\e[0m  '
 
 ###############################################################################
 ###_miscellaneous_code_###
