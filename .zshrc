@@ -18,7 +18,8 @@ export PATH="$PATH:$HOME/.local/script"
 HISTORY_BASE="${ZDOTDIR}/dir_history" #for plugin per-directory-history
 ZSH_CACHE_DIR=${ZDOTDIR}/cache
 ZSH_COMPDUMP=${ZDOTDIR}/.zcompdump
-[[ ! -d $ZSH_CACHE_DIR ]]&& mkdir $ZSH_CACHE_DIR
+zmodload zsh/files
+[[ ! -d $ZSH_CACHE_DIR ]] && zf_mkdir $ZSH_CACHE_DIR
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -258,7 +259,13 @@ alias -s gif=feh
 
 # autoload -U colors && colors
 # autoload -U promptinit && promptinit
-eval "$(starship init zsh)"
+# eval "$(starship init zsh)"
+(){
+    local cache="${ZSH_CACHE_DIR}/starship-init.zsh"
+    local bin="${commands[starship]:-starship}"
+    [[ ! -f "$cache" || "$bin" -nt "$cache" ]] && "$bin" init zsh >| "$cache"
+    source "$cache"
+}
 export PS4='+\e[33m${LINENO}\e[37m:\e[30;1m${FUNCNAME[0]}\e[37m:\e[0m  '
 
 ###############################################################################
@@ -311,10 +318,14 @@ function check_com () {
 
 
 #f5# cd to directoy and list files
-function cl () { emulate -L zsh; cd $1 && ls -a }
+function cl () { emulate -L zsh; builtin cd $1 && print -l -- *(D) }
 #
 #f5# Create temporary directory and \kbd{cd} to it
-function cdt () { builtin cd "$(mktemp -d)"; builtin pwd }
+# function cdt () { builtin cd "$(mktemp -d)"; builtin pwd }
+function cdt () {
+    local tmp="${TMPDIR:-/tmp}/zsh-cdt-$$-$RANDOM"
+    zf_mkdir "$tmp" && builtin cd "$tmp" && builtin pwd
+}
 #
 #f5# Create Directoy and cd to it
 function mcd () {
@@ -323,7 +334,7 @@ function mcd () {
         return 1;
     fi
     if [[ ! -d "$1" ]]; then
-        command mkdir -p "$1"
+        zf_mkdir -p "$1"
     else
         printf ''%s'\'' already exists: cd-ing.\n' "$1"
     fi
@@ -372,7 +383,7 @@ _mise_lazy_activate() {
             local cache="$HOME/.cache/mise-activate.zsh"
             local mise_bin="/usr/bin/mise"
             if [[ ! -f "$cache" || "$mise_bin" -nt "$cache" ]]; then
-                mkdir -p "${cache:h}"
+                zf_mkdir -p "${cache:h}"
                 "$mise_bin" activate zsh > "$cache"
             fi
             source "$cache"
