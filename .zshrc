@@ -1,3 +1,5 @@
+# zmodload zsh/zprof
+###Table_Of_Content### press * jump to subheading
 ###_set_variables_###
 ###_set_options_###
 ###_aliases_###
@@ -5,13 +7,17 @@
 ###_miscellaneous_code_###
 ###_bindkey_###
 ###_enable_terminal_transparent_###
+###_Lazy_mise_activation_###
+###_Zinit'_###
 
 ################################################################################
 ###_set_variables_### (for oh-my-zsh)
 export PATH="$PATH:$HOME/.local/script"
-export ZSH=/usr/share/oh-my-zsh
-HISTORY_BASE="$HOME/.dir_history" #for plugin per-directory-history
-ZSH_CACHE_DIR=$HOME/.oh-my-zsh-cache
+# export ZSH="${ZDOTDIR}/oh-my-zsh"
+# export ZSH=/usr/share/oh-my-zsh
+HISTORY_BASE="${ZDOTDIR}/dir_history" #for plugin per-directory-history
+ZSH_CACHE_DIR=${ZDOTDIR}/cache
+ZSH_COMPDUMP=${ZDOTDIR}/.zcompdump
 [[ ! -d $ZSH_CACHE_DIR ]]&& mkdir $ZSH_CACHE_DIR
 
 # Uncomment the following line to use case-sensitive completion.
@@ -53,14 +59,24 @@ DISABLE_AUTO_UPDATE="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(colorize copydir copyfile cp extract sudo 
-dircycle dirhistory wd per-directory-history 
-git git-extras gitfast git_remote_branch github tig 
-git-flow git-flow-avh git-hubflow 
-archlinux systemd docker pip python bundler gem npm)
+#plugins=(colorize copydir copyfile cp extract sudo 
+# git git-extras gitfast git_remote_branch github tig 
+#plugins=(colorize copyfile cp extract sudo 
+#dircycle dirhistory wd per-directory-history 
+#git git-extras gitfast github tig 
+#git-flow git-flow-avh git-hubflow 
+#
+#archlinux systemd docker pip python bundler gem npm)
 
-source $ZSH/oh-my-zsh.sh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.antidote/antidote.zsh
+antidote load
+ZSH_DISABLE_COMPFIX=true
+#source $ZSH/oh-my-zsh.sh
+#source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+source /home/philosoph/.config/broot/launcher/bash/br
+
 ###############################################################################
 ###_set_options_### see man zsh zshoptions
 
@@ -206,8 +222,9 @@ alias vin='vim --noplugin'
 alias vic="vim ~/.vim/vimrc"
 alias vip='vim ~/.vim/vimrc.plugin.conf'
 alias vix='vim ~/.Xresources'
-alias viz='vim ~/.zshrc'
-alias srz='source ~/.zshrc'
+alias viz='vim ${ZDOTDIR:-$HOME}/.zshrc'
+alias vizp='vim ${ZDOTDIR:-$HOME}/.zsh_plugins.txt'
+alias srz='source ${ZDOTDIR:-$HOME}/.zshrc'
 alias xrdbx='xrdb ~/.Xresources'
 alias ect='emacsclient -t'
 alias ecc='emacsclient -c'
@@ -221,7 +238,6 @@ alias prn='perl-rename'
 
 alias hibernate='systemctl start systemd-hibernate.service'
 alias qs='~/.local/bin/qshell_linux_amd64'
-
 ##_associate_types_and_extensions_(be_aware_with_perl_scripts_and_anwanted_behaviour!)
 #check_com zsh-mime-setup || { autoload zsh-mime-setup && zsh-mime-setup }
 #alias -s pl='perl -S'
@@ -240,32 +256,9 @@ alias -s gif=feh
 #man zshcontrib
 #           GATHERING INFORMATION FROM VERSION CONTROL SYSTEMS
 
-autoload -U colors && colors
-autoload -U promptinit && promptinit
-if [[ $HOST == 'reuleaux' ]]&&[[ $USER == 'j0ham' ]];then
-    PROMPT="%{$fg_no_bold[yellow]%}$%{$fg_no_bold[green]%}"
-else
-    PROMPT="%{$fg_bold[blue]%}%n@%M%{$fg_no_bold[yellow]%}$%{$fg_no_bold[green]%}"
-fi
-setopt prompt_subst
-autoload -Uz vcs_info
-#zstyle ':vcs_info:*' enable git svn hg
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' actionformats \
-    '%F{5}(%F{12}%s%F{5})%F{3}-%F{5}[%F{35}%b%F{3}|%F{1}%a%F{5}]%f'
-zstyle ':vcs_info:*' formats       \
-    '%F{5}(%F{12}%s%F{5})%F{3}-%F{5}[%F{35}%b%F{5}]%F{2}%c%F{1}%u%f'
-zstyle ':vcs_info:git:*' stagedstr 'M'
-zstyle ':vcs_info:git:*' unstagedstr 'M'
-zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
-+vi-git-untracked() {
-  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
-  [[ $(git ls-files --other --directory --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ; then
-  hook_com[unstaged]+='%F{1}??%f'
-fi
-}
-precmd () { vcs_info }
-RPROMPT=' %F{243}%3~%f ${vcs_info_msg_0_}%f'
+# autoload -U colors && colors
+# autoload -U promptinit && promptinit
+eval "$(starship init zsh)"
 export PS4='+\e[33m${LINENO}\e[37m:\e[30;1m${FUNCNAME[0]}\e[37m:\e[0m  '
 
 ###############################################################################
@@ -355,13 +348,67 @@ bindkey "^U" backward-kill-line
 #setxkbmap -option ctrl:swapcaps
 ################################################################################
 ###_enable_terminal_transparent_###
-if [ -n "$WINDOWID" ];then
-	TRANSPARENCY_HEX=$(printf 0x%x $((0xffffffff * 80 / 100)))
-	xprop -id "$WINDOWID" -f _NET_WM_WINDOW_OPACITY 32c \
-                       -set _NET_WM_WINDOW_OPACITY "$TRANSPARENCY_HEX"
-fi
+#if [ -n "$WINDOWID" ];then
+#	TRANSPARENCY_HEX=$(printf 0x%x $((0xffffffff * 80 / 100)))
+#	xprop -id "$WINDOWID" -f _NET_WM_WINDOW_OPACITY 32c \
+#                       -set _NET_WM_WINDOW_OPACITY "$TRANSPARENCY_HEX"
+#fi
 
 #[[ $TERM=="xterm-256color" || $TERM=="rxvt-unicode-256color" ]]\
 #&& transset-df .9 --id "$WINDOWID" >/dev/null
 
+################################################################################
+###_Lazy_mise_activation_###
+# only activate when entering a mise-managed directory.
+# Saves ~200ms on every shell startup when not in a mise project.
+_mise_lazy_activate() {
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -f "$dir/.mise.toml"              || -f "$dir/mise.toml"            ||
+              -f "$dir/.mise/config.toml"       || -f "$dir/.mise.local.toml"     ||
+              -f "$dir/mise.local.toml"         || -f "$dir/.tool-versions"       ||
+              -f "$dir/.config/mise/config.toml" ]]; then
+            add-zsh-hook -d precmd _mise_lazy_activate
+            local cache="$HOME/.cache/mise-activate.zsh"
+            local mise_bin="/usr/bin/mise"
+            if [[ ! -f "$cache" || "$mise_bin" -nt "$cache" ]]; then
+                mkdir -p "${cache:h}"
+                "$mise_bin" activate zsh > "$cache"
+            fi
+            source "$cache"
+            _mise_hook   # apply versions for current directory immediately
+            return
+        fi
+        dir="${dir:h}"
+    done
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _mise_lazy_activate
+
+################################################################################
+###_Zinit'_###
+	
+# if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+#     print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+#     command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+#     command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+#         print -P "%F{33} %F{34}Installation successful.%f%b" || \
+#         print -P "%F{160} The clone has failed.%f%b"
+# fi
+#
+# source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+# autoload -Uz _zinit
+# (( ${+_comps} )) && _comps[zinit]=_zinit
+#
+# # Load a few important annexes, without Turbo
+# # (this is currently required for annexes)
+# zinit light-mode for \
+#     zdharma-continuum/zinit-annex-as-monitor \
+#     zdharma-continuum/zinit-annex-bin-gem-node \
+#     zdharma-continuum/zinit-annex-patch-dl \
+#     zdharma-continuum/zinit-annex-rust
+#
+# ### End of Zinit's installer chunk
+#
 ## END OF FILE #################################################################
+# zprof | head -20
