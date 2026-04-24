@@ -1,4 +1,4 @@
-# zmodload zsh/zprof
+zmodload zsh/zprof
 ###Table_Of_Content### press * jump to subheading
 ###_set_variables_###
 ###_set_options_###
@@ -12,12 +12,15 @@
 
 ################################################################################
 ###_set_variables_### (for oh-my-zsh)
-export PATH="$PATH:$HOME/.local/script"
+
+export PATH="$PATH:$HOME/.local/script:$HOME/.cargo/bin"
+export https_proxy=http://127.0.0.1:7890
+export http_proxy=http://127.0.0.1:7890
 # export ZSH="${ZDOTDIR}/oh-my-zsh"
 # export ZSH=/usr/share/oh-my-zsh
-HISTORY_BASE="${ZDOTDIR}/dir_history" #for plugin per-directory-history
-ZSH_CACHE_DIR=${ZDOTDIR}/cache
-ZSH_COMPDUMP=${ZDOTDIR}/.zcompdump
+HISTORY_BASE="${ZDOTDIR:-$HOME}/dir_history" #for plugin per-directory-history
+ZSH_CACHE_DIR=${ZDOTDIR:-$HOME}/cache
+ZSH_COMPDUMP=${ZDOTDIR:-$HOME}/.zcompdump
 zmodload zsh/files
 [[ ! -d $ZSH_CACHE_DIR ]] && zf_mkdir $ZSH_CACHE_DIR
 
@@ -76,7 +79,7 @@ ZSH_DISABLE_COMPFIX=true
 #source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-source /home/philosoph/.config/broot/launcher/bash/br
+[[ -f ~/.config/broot/launcher/bash/br ]] && source ~/.config/broot/launcher/bash/br
 
 ###############################################################################
 ###_set_options_### see man zsh zshoptions
@@ -205,6 +208,27 @@ alias lssmall="command ls -Srl *(.oL[1,10])"                   # a2 # Display th
 alias lsnewdir="command ls -rthdl *(/om[1,10]) .*(D/om[1,10])" # a2 # Display the 10 newest directories and 10 newest .directories
 alias lsolddir="command ls -rthdl *(/Om[1,10]) .*(D/Om[1,10])" # a2 # Display the 10 oldest directories and 10 oldest .directories
 
+# cd + ls combos: cd to DIR then list with each ls variant
+function cdl()        { builtin cd "${1:-.}" && l }
+function cdla()       { builtin cd "${1:-.}" && la }
+function cdll()       { builtin cd "${1:-.}" && ll }
+function cdlla()      { builtin cd "${1:-.}" && lla }
+function cddir()      { builtin cd "${1:-.}" && dir }
+function cdlad()      { builtin cd "${1:-.}" && lad }
+function cdlsa()      { builtin cd "${1:-.}" && lsa }
+function cdlss()      { builtin cd "${1:-.}" && lss }
+function cdlsl()      { builtin cd "${1:-.}" && lsl }
+function cdlsd()      { builtin cd "${1:-.}" && lsd }
+function cdlse()      { builtin cd "${1:-.}" && lse }
+function cdlsx()      { builtin cd "${1:-.}" && lsx }
+function cdlsw()      { builtin cd "${1:-.}" && lsw }
+function cdlsbig()    { builtin cd "${1:-.}" && lsbig }
+function cdlsnew()    { builtin cd "${1:-.}" && lsnew }
+function cdlsold()    { builtin cd "${1:-.}" && lsold }
+function cdlssmall()  { builtin cd "${1:-.}" && lssmall }
+function cdlsnewdir() { builtin cd "${1:-.}" && lsnewdir }
+function cdlsolddir() { builtin cd "${1:-.}" && lsolddir }
+
 alias rcd='cd ..; rmdir $OLDPWD || cd $OLDPWD' #a2# Remove current empty directory.
 
 ##_enable_color_support_of_ls_and_also_add_handy_aliases
@@ -266,6 +290,52 @@ alias -s gif=feh
     [[ ! -f "$cache" || "$bin" -nt "$cache" ]] && "$bin" init zsh >| "$cache"
     source "$cache"
 }
+
+setopt PROMPT_SUBST
+# export PRMT_TIMEOUT=50
+# zsh/datetime 提供 strftime 内建，替换外部 date 命令
+# zmodload zsh/datetime
+
+# function _prmt_prompt() {
+#     local code=${_prmt_exit_code:-0}
+#     local username hostname user_host time_str pad status_mark
+#     username="${USER}"
+#     hostname="${HOST%%.*}"
+#     user_host="${username}@${hostname}"
+#     # time_str="$(date +%H:%M)"
+#     # time_hs=$(prmt --code $code "!{time:yellow:24hs}#")
+#     strftime -s time_str '%H:%M:%S' $EPOCHSECONDS
+#     path_a_zsh=$PWD              # /home/user/projects  (zsh native)
+#     path_r_zsh="${(%):-%~}"
+#     path_s_zsh="${(%):-%1~}"     # projects  (zsh native)
+#     local path_r path_a path_s path_r_zshpath_a_zsh path_s_zsh path_i path_u
+#     # path_r=$(prmt '{path::r}')   # ~/projects
+#     # path_a=$(prmt '{path::a}')   # /home/user/projects
+#     # path_s=$(prmt '{path::s}')   # projects
+#     path_i=$(prmt '{path::i}')   # ~/p/projects
+#     # path_u=$(prmt '{path::u}')   # ~/prjcts
+#     git_info=$(prmt '{git::::}')
+#     pad=$(( COLUMNS - ${#user_host} - 1 - ${#time_str} - 1 - ${#path_i} - 1 - ${#git_info} ))
+#     (( pad < 1 )) && pad=1
+#     # $(prmt --shell zsh --code $code '{ok:green}{fail:red} ')
+#     if (( code == 0 )); then
+#         status_mark='%F{green}✓%f '
+#     else
+#         status_mark='%F{red}✗%f '
+#     fi
+#     printf '%%F{green}%s%%f@%%F{blue}%s%%f%%F{magenta}!%%f%%F{yellow}%s%%f#%*s%%F{cyan}%s%%f:%s\n%s' \
+#         "$username" "$hostname" "$time_str" "$pad" "" "$path_i" "$git_info" "$status_mark"
+# }
+#
+# function _prmt_precmd() { _prmt_exit_code=$?; }
+#
+# PROMPT='$(_prmt_prompt)'
+#
+# typeset -ga precmd_functions
+# (( ${precmd_functions[(I)_prmt_precmd]} )) || precmd_functions+=(_prmt_precmd)
+#
+# TRAPWINCH() { zle && zle reset-prompt; }
+
 export PS4='+\e[33m${LINENO}\e[37m:\e[30;1m${FUNCNAME[0]}\e[37m:\e[0m  '
 
 ###############################################################################
@@ -381,7 +451,8 @@ _mise_lazy_activate() {
               -f "$dir/.config/mise/config.toml" ]]; then
             add-zsh-hook -d precmd _mise_lazy_activate
             local cache="$HOME/.cache/mise-activate.zsh"
-            local mise_bin="/usr/bin/mise"
+            local mise_bin="${commands[mise]:-/usr/bin/mise}"
+            [[ ! -x "$mise_bin" ]] && return
             if [[ ! -f "$cache" || "$mise_bin" -nt "$cache" ]]; then
                 zf_mkdir -p "${cache:h}"
                 "$mise_bin" activate zsh > "$cache"
@@ -422,4 +493,4 @@ add-zsh-hook precmd _mise_lazy_activate
 # ### End of Zinit's installer chunk
 #
 ## END OF FILE #################################################################
-# zprof | head -20
+zprof | head -20
