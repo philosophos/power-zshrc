@@ -13,9 +13,29 @@ zmodload zsh/zprof
 ################################################################################
 ###_set_variables_### (for oh-my-zsh)
 
-export PATH="$PATH:$HOME/.local/script:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.local/share:$HOME/.local/bin:$HOME/.local/share/mise/installs/python/3.12/bin:$HOME/.cargo/bin:/opt/natapp"
+
+# pnpm
+export PNPM_HOME="/home/philosoph/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+#
+
+# 自动启动 ssh-agent 并加载私钥
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)" > /dev/null
+  ssh-add ~/.ssh/id_ed25519 2> /dev/null || true
+fi
 export https_proxy=http://127.0.0.1:7890
 export http_proxy=http://127.0.0.1:7890
+#export HTTPS_PROXY=$https_proxy
+#export HTTP_PROXY=$http_proxy
+export no_proxy="r.cnpmjs.org,registry.npmmirror.com,localhost,127.0.0.1"
+export NO_PROXY=$no_proxy
+export UV_LINK_MODE=copy
 # export ZSH="${ZDOTDIR}/oh-my-zsh"
 # export ZSH=/usr/share/oh-my-zsh
 HISTORY_BASE="${ZDOTDIR:-$HOME}/dir_history" #for plugin per-directory-history
@@ -245,6 +265,7 @@ alias rcd='cd ..; rmdir $OLDPWD || cd $OLDPWD' #a2# Remove current empty directo
 
 alias vin='vim --noplugin'
 alias vic="vim ~/.vim/vimrc"
+alias vicc="vim ~/.claude/settings.json"
 alias vip='vim ~/.vim/vimrc.plugin.conf'
 alias vix='vim ~/.Xresources'
 alias viz='vim ${ZDOTDIR:-$HOME}/.zshrc'
@@ -263,6 +284,11 @@ alias prn='perl-rename'
 
 alias hibernate='systemctl start systemd-hibernate.service'
 alias qs='~/.local/bin/qshell_linux_amd64'
+
+alias pncfgs='nocorrect pnpm config set'
+alias pncfgg='nocorrect pnpm config get'
+alias rtk='nocorrect rtk'
+
 ##_associate_types_and_extensions_(be_aware_with_perl_scripts_and_anwanted_behaviour!)
 #check_com zsh-mime-setup || { autoload zsh-mime-setup && zsh-mime-setup }
 #alias -s pl='perl -S'
